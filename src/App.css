@@ -116,6 +116,21 @@ img {
   margin-right: auto;
 }
 
+@media screen and (max-width: 400px) {
+  .ImageGallery {
+    display: grid;
+    max-width: calc(100vw - 48px);
+    grid-template-columns: repeat(auto-fill, minmax(312px, 1fr));
+    grid-gap: 16px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding: 0;
+    list-style: none;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 /*
  * Стили компонента ImageGalleryItem
  */

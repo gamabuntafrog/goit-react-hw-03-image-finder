@@ -26,12 +26,18 @@ class ImageGallery extends Component {
       )
         .then((res) => res.json())
         .then((res) => {
-          this.setState({
-            page: 1,
-            images: res.hits,
-            totalHits: res.totalHits,
-            status: "resolved",
-          });
+          console.log(res);
+
+          if (res.totalHits === 0) {
+            this.setState({ status: "empty" });
+          } else {
+            this.setState({
+              page: 1,
+              images: res.hits,
+              totalHits: res.totalHits,
+              status: "resolved",
+            });
+          }
         });
     }
 
@@ -80,6 +86,10 @@ class ImageGallery extends Component {
 
     if (status === "pending") {
       return <Loader />;
+    }
+
+    if (status === "empty") {
+      return <h1>Not found :(</h1>;
     }
 
     if (status === "resolved") {
