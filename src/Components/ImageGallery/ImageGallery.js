@@ -3,6 +3,7 @@ import ImageGalleryItem from "../ImageGalleryItem";
 import Button from "../Button";
 import Loader from "../Loader";
 import Modal from "../Modal";
+import imagesApi from "../services/images-api";
 
 class ImageGallery extends Component {
   state = {
@@ -19,26 +20,19 @@ class ImageGallery extends Component {
     const nextName = this.props.imageName;
 
     if (prevName !== nextName) {
-      this.setState({ status: "pending" });
+      this.setState({ status: "pending", page: 1 });
 
-      fetch(
-        `https://pixabay.com/api/?q=${this.props.imageName}&page=1&key=24171560-aa5fd197445269f608c2688cc&image_type=photo&orientation=horizontal&per_page=12`
-      )
-        .then((res) => res.json())
-        .then((res) => {
-          console.log(res);
-
-          if (res.totalHits === 0) {
-            this.setState({ status: "empty" });
-          } else {
-            this.setState({
-              page: 1,
-              images: res.hits,
-              totalHits: res.totalHits,
-              status: "resolved",
-            });
-          }
-        });
+      imagesApi.fetchImages(nextName, 1).then((res) => {
+        if (res.totalHits === 0) {
+          this.setState({ status: "empty" });
+        } else {
+          this.setState({
+            images: res.hits,
+            totalHits: res.totalHits,
+            status: "resolved",
+          });
+        }
+      });
     }
 
     //если меняется page то делаю новый фетч
@@ -47,16 +41,12 @@ class ImageGallery extends Component {
     const nextPage = this.state.page;
 
     if (prevPage !== nextPage) {
-      fetch(
-        `https://pixabay.com/api/?q=${this.props.imageName}&page=${this.state.page}&key=24171560-aa5fd197445269f608c2688cc&image_type=photo&orientation=horizontal&per_page=12`
-      )
-        .then((res) => res.json())
-        .then((res) => {
-          this.setState({
-            images: this.state.images.concat(res.hits),
-            status: "resolved",
-          });
+      imagesApi.fetchImages(nextName, nextPage).then((res) => {
+        this.setState({
+          images: this.state.images.concat(res.hits),
+          status: "resolved",
         });
+      });
     }
   }
 
